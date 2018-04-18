@@ -15,12 +15,12 @@ class BDSpider(scrapy.Spider):
         businesses = response.css('div.listing-data')
 
         for business in businesses:
-            #yield self.parse_page(business)
+            #self.parse_page(business)
             x = business.css('a.contact-phone::attr(href)').extract_first(default="").strip()
             try:
                 x = x.split(":")[1]
             except Exception as ex:
-                print("heh")
+                x = business.css('a.contact-phone::attr(href)').extract_first(default="").strip()
 
             yield {
                 'title': business.css('a.listing-name::text').extract_first().strip(),
