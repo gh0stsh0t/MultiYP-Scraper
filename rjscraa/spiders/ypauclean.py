@@ -15,19 +15,7 @@ class BDSpider(scrapy.Spider):
         businesses = response.css('div.listing-data')
 
         for business in businesses:
-            #self.parse_page(business)
-            x = business.css('a.contact-phone::attr(href)').extract_first(default="").strip()
-            try:
-                x = x.split(":")[1]
-            except Exception as ex:
-                x = business.css('a.contact-phone::attr(href)').extract_first(default="").strip()
-
-            yield {
-                'title': business.css('a.listing-name::text').extract_first().strip(),
-                'email': business.css('a.contact-email::attr(data-email)').extract_first(default=""),
-                'phone': x,
-                'website': business.css('a.contact-url::attr(href)').extract_first(default="")
-            }
+            yield self.getinfo(business)
 
         next_page = response.css('a.navigation::attr(href)').extract()
         if next_page is not None:
@@ -35,9 +23,24 @@ class BDSpider(scrapy.Spider):
                 next_page = response.urljoin(next_page[0])
             elif len(next_page) is 2:
                 next_page = response.urljoin(next_page[1])
+            else:
+                logging.info('no more things to scrape')
             logging.info(next_page)
             print(next_page)
             yield scrapy.Request(next_page, callback=self.parse)
         else:
             logging.info('no more things to scrape')
-            print('no more things to scrape')
+
+    def getinfo(self, business):
+        x = business.css('a.contact-phone::attr(href)').extract_first(default="").strip()
+        try:
+            x = x.split(":")[1]
+        except Exception as ex:
+            x = x
+
+        return {
+            'title': business.css('a.listing-name::text').extract_first().strip(),
+            'email': business.css('a.contact-email::attr(data-email)').extract_first(default=""),
+            'phone': x,
+            'website': business.css('a.contact-url::attr(href)').extract_first(default="")
+        }
