@@ -2,7 +2,6 @@ import scrapy
 from scrapy import Request
 from bs4 import BeautifulSoup
 import logging
-import csv
 
 class BDSpider(scrapy.Spider):
     name = "ypAU"
@@ -10,18 +9,9 @@ class BDSpider(scrapy.Spider):
     def __init__(self, category=None, *args, **kwargs):
         super(BDSpider, self).__init__(*args, **kwargs)
         self.start_urls = ['https://www.yellowpages.com.au/search/listings?clue=%s' % category]
-        with open('test.csv') as csvfile: # Read in the csv file
-            readCSV = csv.reader(csvfile, delimiter=',')
-            self.zips = []
-            for row in readCSV:
-                zip = row[0]
-
-            self.zips.append(zip) # Isolate the zipcodes portion of csv
-            logging.info(self.zips)
 
     def parse(self, response):
         businesses = response.css('div.listing-data')
-        print(self.zip[5])
         for business in businesses:
             yield self.getinfo(business)
 
