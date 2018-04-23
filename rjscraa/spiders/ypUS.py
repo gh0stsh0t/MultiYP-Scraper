@@ -19,8 +19,7 @@ class BDSpider(scrapy.Spider):
             self.zips.append(zip) # Isolate the zipcodes portion of csv
 
     def parse(self, response):
-        businesses = response.css('div.organic')
-        businesses = businesses.css('div.info')
+        businesses = response.css('div.organic').css('div.info')
         
         for business in businesses:
             business_url = business.css('a.business-name::attr(href)').extract_first()
