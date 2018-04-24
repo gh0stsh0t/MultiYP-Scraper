@@ -3,7 +3,7 @@ from scrapy import Request
 from bs4 import BeautifulSoup
 import logging
 import csv
-
+import sys
 
 class YPSpider(scrapy.Spider): 
     name = "ypUS" 
@@ -19,11 +19,12 @@ class YPSpider(scrapy.Spider):
                 states.append(row[1])
 
             if state is None:
-                self.zips.append(states) # Isolate the zipcodes portion of csv
+                self.zips.extend(states) # Isolate the zipcodes portion of csv
             else:
                 state = state.split(',')
                 state = [int(i) for i in state] 
-                for x in list(set(state)):
+                state = list(set(state))
+                for x in state:
                     try:
                         self.zips.append(states[x-1])
                     except Exception:
