@@ -1,22 +1,39 @@
-import scrapy
+import scrapy 
 from scrapy import Request
 from bs4 import BeautifulSoup
 import logging
 import csv
 
-class BDSpider(scrapy.Spider):
-    name = "ypUS"
 
-    def __init__(self, category=None, *args, **kwargs):
-        super(BDSpider, self).__init__(*args, **kwargs)
-        self.start_urls = ["https://www.yellowpages.com/search?search_terms=%s&geo_location_terms=AL" % category]
+class YPSpider(scrapy.Spider): 
+    name = "ypUS" 
+    def __init__(self, category=None, state=None, *args, **kwargs): 
+        super(YPSpider, self).__init__(*args, **kwargs)
         self.category=category 
         with open('UScities.csv') as csvfile: # Read in the csv file
             readCSV = csv.reader(csvfile, delimiter=',')
             self.zips = []
+            states = []
+            logging.info(state)
             for row in readCSV:
-                zip = row[1]
-            self.zips.append(zip) # Isolate the zipcodes portion of csv
+                states.append(row[1])
+
+            if state is None:
+                self.zips.append(states) # Isolate the zipcodes portion of csv
+            else:
+                state = state.split(',')
+                state = [int(i) for i in state] 
+                for x in list(set(state)):
+                    try:
+                        self.zips.append(states[x-1])
+                    except Exception:
+                        sys.exc_clear()
+
+            logging.info("States to go through: "+str(self.zips))
+            #toDO: o(n+2k) make into o(n)
+
+        next_page="https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(category, self.zips.pop(0))
+        self.start_urls = [next_page]
 
     def parse(self, response):
         businesses = response.css('div.organic').css('div.info')
@@ -28,6 +45,7 @@ class BDSpider(scrapy.Spider):
             yield Request(business_url, callback=self.parse_page)
 
         next_page = response.css('a.next::attr(href)').extract_first()
+
         if next_page is not None:
             next_page = response.urljoin(next_page)
             logging.info(next_page)
@@ -47,8 +65,8 @@ class BDSpider(scrapy.Spider):
         x=business.css('a.email-business::attr(href)').extract_first(default="")
         try:
             x=x.split(':')[1]
-        except Exception as ex:
-            x=x
+        except Exception:
+            sys.exc_clear()
 
         return {
             'title': business.css('h1::text').extract_first().strip(),
