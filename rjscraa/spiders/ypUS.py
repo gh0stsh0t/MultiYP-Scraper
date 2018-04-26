@@ -1,15 +1,15 @@
-import scrapy 
+import scrapy
 from scrapy import Request
 from bs4 import BeautifulSoup
 import logging
 import csv
 import sys
 
-class YPSpider(scrapy.Spider): 
-    name = "ypUS" 
-    def __init__(self, category=None, state=None, *args, **kwargs): 
+class YPSpider(scrapy.Spider):
+    name = "ypUS"
+    def __init__(self, category=None, state=None, *args, **kwargs):
         super(YPSpider, self).__init__(*args, **kwargs)
-        self.category=category 
+        self.category=category
         with open('UScities.csv') as csvfile: # Read in the csv file
             readCSV = csv.reader(csvfile, delimiter=',')
             self.zips = []
@@ -22,7 +22,7 @@ class YPSpider(scrapy.Spider):
                 self.zips.extend(states) # Isolate the zipcodes portion of csv
             else:
                 state = state.split(',')
-                state = [int(i) for i in state] 
+                state = [int(i) for i in state]
                 state = list(set(state))
                 for x in state:
                     try:
@@ -38,7 +38,7 @@ class YPSpider(scrapy.Spider):
 
     def parse(self, response):
         businesses = response.css('div.organic').css('div.info')
-        
+
         for business in businesses:
             business_url = business.css('a.business-name::attr(href)').extract_first()
             business_url = response.urljoin(business_url)
@@ -56,7 +56,7 @@ class YPSpider(scrapy.Spider):
             if len(self.zips) > 0:
                 next_page="https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(self.category, self.zips.pop(0))
                 yield scrapy.Request(next_page, callback=self.parse)
-            else:    
+            else:
                 logging.info('no more things to scrape')
 
     def parse_page(self, response):
