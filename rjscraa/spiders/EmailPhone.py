@@ -16,12 +16,11 @@ class EPSpider(scrapy.Spider):
         'CONCURRENT_REQUESTS':  200,
         'REACTOR_THREADPOOL_MAXSIZE': 20,
         'RETRY_ENABLED': 'False',
-        'FEED_EXPORT_FIELDS': ['title','email','phone','website'],
-        'ITEM_PIPELINES': {}
+        'FEED_EXPORT_FIELDS': ['title','email','phone','website']
         }
 
     def __init__(self, content=None, *args, **kwargs):
-        super(EPSpider, self).__init__(args, **kwargs)
+        super(EPSpider, self).__init__(*args, **kwargs)
         with open(content+'.csv') as csvfile:
             readCSV = csv.DictReader(csvfile)
             self.zips = []
