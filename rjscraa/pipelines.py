@@ -7,6 +7,7 @@
 from scrapy.exceptions import DropItem
 import logging
 
+
 class DuplicatesPipeline(object):
 
     def __init__(self):
@@ -19,6 +20,8 @@ class DuplicatesPipeline(object):
             self.ids_seen.add(item['title'])
             return item
 
+
 class RjscraaPipeline(object):
+
     def process_item(self, item, spider):
         return item

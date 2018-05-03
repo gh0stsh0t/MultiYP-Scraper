@@ -25,10 +25,11 @@ process.crawl(spiders[choice-1], category=cat)
 process.start()
 
 print("\nRemoving Duplicate Entries")
-with open(filename+'.csv','r') as in_file, open(filename+'cleaned.csv','w') as out_file:
+with open(filename+'.csv', 'r') as in_file, open(filename+'cleaned.csv', 'w') as out_file:
     seen = set()  # set for fast O(1) amortized lookup
     for line in in_file:
-        if line in seen: continue  # skip duplicate
+        if line in seen:
+            continue  # skip duplicate
 
         seen.add(line)
         out_file.write(line)

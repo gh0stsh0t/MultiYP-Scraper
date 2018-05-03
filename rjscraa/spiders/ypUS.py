@@ -5,12 +5,14 @@ import logging
 import csv
 import sys
 
+
 class YPSpider(scrapy.Spider):
     name = "ypUS"
+
     def __init__(self, category=None, state=None, *args, **kwargs):
         super(YPSpider, self).__init__(*args, **kwargs)
-        self.category=category
-        with open('UScities.csv') as csvfile: # Read in the csv file
+        self.category = category
+        with open('UScities.csv') as csvfile:  # Read in the csv file
             readCSV = csv.reader(csvfile, delimiter=',')
             self.zips = []
             states = []
@@ -19,7 +21,7 @@ class YPSpider(scrapy.Spider):
                 states.append(row[1])
 
             if state is None:
-                self.zips.extend(states) # Isolate the zipcodes portion of csv
+                self.zips.extend(states)  # Isolate the zipcodes portion of csv
             else:
                 state = state.split(',')
                 state = [int(i) for i in state]
@@ -31,16 +33,18 @@ class YPSpider(scrapy.Spider):
                         sys.exc_clear()
 
             logging.info("States to go through: "+str(self.zips))
-            #toDO: o(n+2k) make into o(n)
+            # toDO: o(n+2k) make into o(n)
 
-        next_page="https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(category, self.zips.pop(0))
+        next_page = "https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(
+            category, self.zips.pop(0))
         self.start_urls = [next_page]
 
     def parse(self, response):
         businesses = response.css('div.organic').css('div.info')
 
         for business in businesses:
-            business_url = business.css('a.business-name::attr(href)').extract_first()
+            business_url = business.css(
+                'a.business-name::attr(href)').extract_first()
             business_url = response.urljoin(business_url)
             logging.info(business_url)
             yield Request(business_url, callback=self.parse_page)
@@ -54,7 +58,8 @@ class YPSpider(scrapy.Spider):
             yield scrapy.Request(next_page, callback=self.parse)
         else:
             if len(self.zips) > 0:
-                next_page="https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(self.category, self.zips.pop(0))
+                next_page = "https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(
+                    self.category, self.zips.pop(0))
                 yield scrapy.Request(next_page, callback=self.parse)
             else:
                 logging.info('no more things to scrape')
@@ -63,9 +68,10 @@ class YPSpider(scrapy.Spider):
         yield self.getinfo(response.xpath("//header[@id='main-header']"))
 
     def getinfo(self, business):
-        x=business.css('a.email-business::attr(href)').extract_first(default="")
+        x = business.css(
+            'a.email-business::attr(href)').extract_first(default="")
         try:
-            x=x.split(':')[1]
+            x = x.split(':')[1]
         except Exception:
             sys.exc_clear()
 
