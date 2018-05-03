@@ -2,3 +2,4 @@
 !UScities.csv
 *.pyc
 *.swp
+crawls/

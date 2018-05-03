@@ -6,13 +6,16 @@ import logging
 
 class BDSpider(scrapy.Spider):
     name = "ypUK"
+    custom_settings = {
+            'FEED_EXPORT_FIELDS': ['title', 'phone', 'website','country']
+            }
 
     def __init__(self, category=None, *args, **kwargs):
         super(BDSpider, self).__init__(*args, **kwargs)
         self.start_urls = ['' % category]
 
     def parse(self, response):
-        businesses = response.css('div.listing-data')
+        businesses = response.css('div.businessCapsule--mainContent')
         for business in businesses:
             yield self.getinfo(business)
 
@@ -28,14 +31,13 @@ class BDSpider(scrapy.Spider):
             logging.info('No extra pages found')
 
     def getinfo(self, business):
-        x = business.css('').extract_first(default="").strip()
-        try:
-            x = x.split(":")[1]
-        except Exception as ex:
-            x = x
+        x = business.css('a.businessCapsule--ctaItem::attr(href)').extract()
+        if len(x) > 1:
+            x = x[1]
 
         return {
-
-
-
+            'title': business.css('a.businessCapsule--name::text').extract_first().strip(),
+            'phone': business.css('span.business--telephoneNumber::text').extract_first().strip(),
+            'website': x,
+            'country': 'United Kingdom'
         }
