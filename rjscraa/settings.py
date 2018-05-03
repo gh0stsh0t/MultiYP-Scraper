@@ -14,7 +14,7 @@ BOT_NAME = 'rjscraa'
 SPIDER_MODULES = ['rjscraa.spiders']
 NEWSPIDER_MODULE = 'rjscraa.spiders'
 
-
+FEED_EXPORT_FIELDS = ['title', 'email', 'phone', 'website', 'country']
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'rjscraa'
 

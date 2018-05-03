@@ -41,4 +41,5 @@ class BDSpider(scrapy.Spider):
             'email': business.css('a.contact-email::attr(data-email)').extract_first(default=""),
             'phone': x,
             'website': business.css('a.contact-url::attr(href)').extract_first(default="")
+            'country': 'Australia'
         }

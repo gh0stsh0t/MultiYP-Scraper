@@ -73,5 +73,6 @@ class YPSpider(scrapy.Spider):
             'title': business.css('h1::text').extract_first().strip(),
             'email': x,
             'phone': business.css('p.phone::text').extract_first(default="").strip(),
-            'website': business.css('a.website-link::attr(href)').extract_first(default="")
+            'website': business.css('a.website-link::attr(href)').extract_first(default=""),
+            'country': 'USA'
         }

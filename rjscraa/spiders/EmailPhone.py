@@ -32,7 +32,7 @@ class EPSpider(scrapy.Spider):
                     self.sites.append(row['website'])
                     url = re.sub(r"https?://(www\.)?", 'http://', row['website'], 1)
                     url = url.split('.')
-                    self.titles[url[0]] = row['title']
+                    self.titles[url[0]] = (row['title'],row['country'])
 
             logging.info(len(self.sites))
             self.start_urls = self.sites
@@ -49,7 +49,7 @@ class EPSpider(scrapy.Spider):
             url = re.sub(r"https?://(www\.)?", 'http://', response.request.url, 1)
             url = url.split('.')
             try:
-                sitedata = metadata(response.request.url, self.titles[url[0]])
+                sitedata = metadata(response.request.url, self.titles[url[0]][0], self.titles[url[0][1])
             except KeyError:
                 raise StopIteration
 
@@ -98,12 +98,13 @@ class EPSpider(scrapy.Spider):
 
 class metadata:
 
-    def __init__(self, site, title):
+    def __init__(self, site, title, country):
         self.email = None
         self.title = title
         self.phone = None
         self.flags = 3
         self.site = site
+        self.country = country
 
 class rjItem(scrapy.Item):
     email = scrapy.Field()
