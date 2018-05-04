@@ -1,5 +1,7 @@
 *.csv
 !UScities.csv
+!UKpostcodes.csv
 *.pyc
 *.swp
 crawls/
+build/

@@ -2,42 +2,74 @@ import scrapy
 from scrapy import Request
 from bs4 import BeautifulSoup
 import logging
+import csv
+import sys
 
-
-class BDSpider(scrapy.Spider):
+class YPSpider(scrapy.Spider):
     name = "ypUK"
     custom_settings = {
-            'FEED_EXPORT_FIELDS': ['title', 'phone', 'website','country']
+            'FEED_EXPORT_FIELDS': ['title', 'phone', 'website','country'],
+            'DOWNLOAD_DELAY': 15
             }
 
-    def __init__(self, category=None, *args, **kwargs):
-        super(BDSpider, self).__init__(*args, **kwargs)
-        self.start_urls = ['' % category]
+    def __init__(self, category=None, state=None, *args, **kwargs):
+        super(YPSpider, self).__init__(*args, **kwargs)
+        self.category = category
+        with open('UKpostcodes.csv') as csvfile:  # Read in the csv file
+            readCSV = csv.reader(csvfile, delimiter=',')
+            self.zips = []
+            states = []
+            logging.info(state)
+            for row in readCSV:
+                states.append(row[0])
+
+            if state is None:
+                self.zips.extend(states)  # Isolate the zipcodes portion of csv
+            else:
+                state = state.split(',')
+                state = [int(i) for i in state]
+                state = list(set(state))
+                for x in state:
+                    try:
+                        self.zips.append(states[x-1])
+                    except Exception:
+                        sys.exc_clear()
+
+            logging.info("States to go through: "+str(self.zips))
+            # toDO: o(n+2k) make into o(n)
+
+        next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(category, self.zips.pop(0))
+        self.start_urls = [next_page]
+
+
 
     def parse(self, response):
         businesses = response.css('div.businessCapsule--mainContent')
         for business in businesses:
             yield self.getinfo(business)
 
-        next_page = response.css('a.navigation::attr(href)').extract()
+        next_page = response.css('a.pagination--next::attr(href)').extract_first()
         if next_page is not None:
-            if len(next_page) is 1:
-                next_page = response.urljoin(next_page[0])
-            elif len(next_page) is 2:
-                next_page = response.urljoin(next_page[0])
-            else:
-                logging.info('No more pages')
+            next_page = response.urljoin(next_page)
+            yield scrapy.Request(next_page, callback=self.parse)
         else:
-            logging.info('No extra pages found')
+            if len(self.zips) > 0:
+                next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
+                yield scrapy.Request(next_page, callback=self.parse)
+            else:
+                logging.info('no more things to scrape')
+
 
     def getinfo(self, business):
         x = business.css('a.businessCapsule--ctaItem::attr(href)').extract()
-        if len(x) > 1:
-            x = x[1]
+        if x:
+            x = x[len(x)-1]
+        else:
+            x = ''
 
         return {
-            'title': business.css('a.businessCapsule--name::text').extract_first().strip(),
-            'phone': business.css('span.business--telephoneNumber::text').extract_first().strip(),
+            'title': business.css('h2.text-h2::text').extract_first(default="").strip(),
+            'phone': business.css('span.business--telephoneNumber::text').extract_first(default="").strip(),
             'website': x,
             'country': 'United Kingdom'
         }
