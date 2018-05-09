@@ -1,0 +1,210 @@
+#:import Color kivy.utils.get_color_from_hex
+#:set Red "#F94A69"
+#:set Green "#06A5AB"
+#:set LBlue "0066BA"
+#:set Blue "#16203B"
+#:set DBlue '#03A9F4'
+
+<Button>
+	bold: True
+	background_color: Color("#1c1c1c")
+
+<TextInput>
+    multiline: False
+
+<LabelText@BoxLayout>:
+    orientation: 'horizontal'      
+    lblTxtIn: 'default'
+    theTxt: txtid
+    Label:
+        text: root.lblTxtIn
+    TextInput:
+        id: txtid
+
+#takes the property of label
+<WrappedLabel@Label>:
+    size_hint_y: None
+
+# multiply the height to 1.5 of the text size
+
+    height: self.texture_size[1] + (self.texture_size[1]/2)
+    width: self.texture_size[1] + (self.texture_size[1]/2)
+    markup: True
+
+<MainScreen>:
+    orientation: 'vertical'
+
+    ActionBar:
+        ActionView:
+            ActionPrevious:
+                titles:""
+                with_previous: False
+            ActionOverflow:
+                ActionButton:
+                    text:"Settings"
+                    on_press: app.open_settings()
+
+
+    ScreenManager:
+        id: kivy_screen_manager
+        StartScreen:
+            id: start_screen
+            name: "start_screen"
+
+        yellowPagesAus:
+            id: yellowPagesAus
+            name: "yellowpagesaus"
+
+        yellowPagesUS:
+            id: yellowPagesUS
+            name: "yellowpagesus"
+
+        yellowPagesUK:
+            id: yellowPagesUK
+            name: "yellowpagesuk"
+
+<StartScreen@Screen>
+    BoxLayout:
+        #Settings
+        orientation:"vertical"
+
+        #about 2% of the width
+        padding: root.width * 0.15, root.height * .02
+
+        #minimum of 2% of the root width and root height of the text
+        spacing: min(root.width, root.height) *.02
+
+        #label found at the center of the start screen
+        WrappedLabel:
+            text:"[b][i][u]Select Website[/b][/i][/u]"
+            font_size: min(root.height, root.width) / 10
+
+        Button:
+            text: "Yellow Pages Australia"
+            font_size: 20
+            on_release: app.root.changeScreen("yellowpagesaus")
+
+        Button:
+            text: "Yellow Pages USA"
+            font_size: 20
+            on_release: app.root.changeScreen("yellowpagesus")
+
+        Button:
+            text: "Yellow Pages UK"
+            font_size: 20
+            on_release: app.root.changeScreen("yellowpagesuk")
+
+<yellowPagesAus@Screen>
+	BoxLayout:
+        #Settings
+        orientation:"vertical"
+
+        #about 2% of the width
+        padding: root.width * 0.02, root.height * .02
+
+        #minimum of 2% of the root width and root height of the text
+        spacing: min(root.width, root.height) *.02
+
+        WrappedLabel:
+            text:"[b]Yellow Pages Australia:[/b]"
+            font_size: min(root.height, root.width) / 10
+
+        LabelText:
+            id: category
+            lblTxtIn: 'Category'
+
+        LabelText:
+            id: filename
+            lblTxtIn: 'File Name'
+
+        Button:
+            text: "Start"
+            font_size: 20
+            color: Color("#FFFFFF")
+            background_color: Color("#2ecc71")
+            #on_release: app.root.changeScreen(self.text.lower())
+
+        Button:
+            text: "Back to Main Screen"
+            font_size: 20
+            on_release: app.root.changeScreen(self.text.lower())
+
+
+<yellowPagesUS@Screen>
+    BoxLayout:
+        #Settings
+        orientation:"vertical"
+
+        #about 2% of the width
+        padding: root.width * 0.02, root.height * .02
+
+        #minimum of 2% of the root width and root height of the text
+        spacing: min(root.width, root.height) *.02
+
+        WrappedLabel:
+            text:"[b]Yellow Pages USA:[/b]"
+            font_size: min(root.height, root.width) / 10
+
+        LabelText:
+            id: usstate
+            lblTxtIn: 'State'
+
+        LabelText:
+            id: category
+            lblTxtIn: 'Category'
+
+        LabelText:
+            id: filename
+            lblTxtIn: 'File Name'
+
+        Button:
+            text: "Start"
+            font_size: 20
+            color: Color("#FFFFFF")
+            background_color: Color("#2ecc71")
+            #on_release: app.root.changeScreen(self.text.lower())
+
+        Button:
+            text: "Back to Main Screen"
+            font_size: 20
+            on_release: app.root.changeScreen(self.text.lower())
+
+<yellowPagesUK@Screen>
+    BoxLayout:
+        #Settings
+        orientation:"vertical"
+
+        #about 2% of the width
+        padding: root.width * 0.02, root.height * .02
+
+        #minimum of 2% of the root width and root height of the text
+        spacing: min(root.width, root.height) *.02
+
+        WrappedLabel:
+            text:"[b]Yellow Pages UK:[/b]"
+            font_size: min(root.height, root.width) / 10
+
+        LabelText:
+            id: postcode
+            lblTxtIn: 'Postcode'
+
+        LabelText:
+            id: category
+            lblTxtIn: 'Category'
+
+        LabelText:
+            id: filename
+            lblTxtIn: 'File Name'
+
+        Button:
+            text: "Start"
+            font_size: 20
+            color: Color("#FFFFFF")
+            background_color: Color("#2ecc71")
+            #on_release: app.root.changeScreen(self.text.lower())
+
+
+        Button:
+            text: "Back to Main Screen"
+            font_size: 20
+            on_release: app.root.changeScreen(self.text.lower())
