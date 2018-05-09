@@ -18,7 +18,7 @@ class BDSpider(scrapy.Spider):
             yield self.getinfo(business)
 
         next_page = response.css('a.navigation::attr(href)').extract()
-        if next_page is not None:
+        if next_page: 
             if len(next_page) is 1:
                 next_page = response.urljoin(next_page[0])
             elif len(next_page) is 2:

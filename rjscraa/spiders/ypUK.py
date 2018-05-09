@@ -9,8 +9,11 @@ class YPSpider(scrapy.Spider):
     name = "ypUK"
     custom_settings = {
             'FEED_EXPORT_FIELDS': ['title', 'phone', 'website','country'],
-            'DOWNLOAD_DELAY': 15
+            'DOWNLOADER_MIDDLEWARES': {'rjscraa.middlewares.ProxpyRotator': 500,
+                'rjscraa.middlewares.RandomUserAgentMiddleware': 400,
+}
             }
+    handle_httpstatus_list = [404, 500]
 
     def __init__(self, category=None, state=None, *args, **kwargs):
         super(YPSpider, self).__init__(*args, **kwargs)
@@ -35,29 +38,33 @@ class YPSpider(scrapy.Spider):
                     except Exception:
                         sys.exc_clear()
 
-            logging.info("States to go through: "+str(self.zips))
+            logging.info("Postcodes to go through: "+str(self.zips))
             # toDO: o(n+2k) make into o(n)
 
         next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(category, self.zips.pop(0))
         self.start_urls = [next_page]
 
 
-
     def parse(self, response):
-        businesses = response.css('div.businessCapsule--mainContent')
-        for business in businesses:
-            yield self.getinfo(business)
-
-        next_page = response.css('a.pagination--next::attr(href)').extract_first()
-        if next_page is not None:
-            next_page = response.urljoin(next_page)
+        if response.status in (404):
+            logging.info("Encountered 404 popping next postcode")
+            next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
             yield scrapy.Request(next_page, callback=self.parse)
         else:
-            if len(self.zips) > 0:
-                next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
+            businesses = response.css('div.businessCapsule--mainContent')
+            for business in businesses:
+                yield self.getinfo(business)
+
+            next_page = response.css('a.pagination--next::attr(href)').extract_first()
+            if next_page is not None:
+                next_page = response.urljoin(next_page)
                 yield scrapy.Request(next_page, callback=self.parse)
             else:
-                logging.info('no more things to scrape')
+                if len(self.zips) > 0:
+                    next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
+                    yield scrapy.Request(next_page, callback=self.parse)
+                else:
+                    logging.info('no more things to scrape')
 
 
     def getinfo(self, business):
@@ -73,3 +80,5 @@ class YPSpider(scrapy.Spider):
             'website': x,
             'country': 'United Kingdom'
         }
+
+

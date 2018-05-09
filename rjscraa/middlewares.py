@@ -5,6 +5,9 @@
 # See documentation in:
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
+import proxpy
+import random
+from scrapy.conf import settings
 from scrapy import signals
 
 
@@ -54,6 +57,17 @@ class RjscraaSpiderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class ProxpyRotator(object):
+    
+    def __init__(self):
+        self.phandler = proxpy.proxyhandler()
+
+    def process_request(self, request, spider):
+        proxy = self.phandler.get_proxy()
+        if proxy:
+            request.meta['proxy'] = proxy
 
 class RandomUserAgentMiddleware(object):
     

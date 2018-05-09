@@ -55,12 +55,10 @@ class proxyhandler:
     def test_domain(self):
         protocol = 'https'
         test_url = '%s://%s' % (protocol, 'www.yell.com/')
-        print("testing: "+self.proxy)
+        logging.info("testing: "+self.proxy)
         try:
             r = requests.head(test_url, timeout=1.5, proxies={'https': self.proxy})
-            logging.info(r.status_code)
-            logging.info(test_url)
             return True
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout) as e:
-            logging.info("error\n")
+            logging.info("Error\n")
             return False
