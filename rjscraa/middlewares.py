@@ -62,7 +62,7 @@ class RjscraaSpiderMiddleware(object):
 class ProxpyRotator(object):
     
     def __init__(self):
-        self.phandler = proxpy.proxyhandler()
+        self.phandler = proxpy.proxyHandler()
 
     def process_request(self, request, spider):
         proxy = self.phandler.get_proxy()

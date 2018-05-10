@@ -5,7 +5,7 @@ import requests
 import logging
 
 
-class proxyhandler:
+class proxyHandler:
     proxylist = []
     proxy = ' '
     calls = 0

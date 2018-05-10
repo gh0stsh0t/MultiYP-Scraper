@@ -46,7 +46,7 @@ class YPSpider(scrapy.Spider):
 
 
     def parse(self, response):
-        if response.status in (404):
+        if response.status == 404:
             logging.info("Encountered 404 popping next postcode")
             next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
             yield scrapy.Request(next_page, callback=self.parse)
@@ -59,12 +59,11 @@ class YPSpider(scrapy.Spider):
             if next_page is not None:
                 next_page = response.urljoin(next_page)
                 yield scrapy.Request(next_page, callback=self.parse)
+            elif len(self.zips) > 0:
+                next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
+                yield scrapy.Request(next_page, callback=self.parse)
             else:
-                if len(self.zips) > 0:
-                    next_page = "https://www.yell.com/ucs/UcsSearchAction.do?keywords={0}&location={1}".format(self.category, self.zips.pop(0))
-                    yield scrapy.Request(next_page, callback=self.parse)
-                else:
-                    logging.info('no more things to scrape')
+                logging.info('no more things to scrape')
 
 
     def getinfo(self, business):
