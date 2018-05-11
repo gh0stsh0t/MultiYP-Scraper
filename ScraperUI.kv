@@ -122,12 +122,12 @@
             font_size: 20
             color: Color("#FFFFFF")
             background_color: Color("#2ecc71")
-            #on_release: app.root.changeScreen(self.text.lower())
+            on_release: app.root.start_wrapper('ypAU', category.theTxt.text, filename.theTxt.text)
 
         Button:
             text: "Back to Main Screen"
             font_size: 20
-            on_release: app.root.changeScreen(self.text.lower())
+            on_release: app.root.changeScreen("back to main screen")#self.text.lower())
 
 
 <yellowPagesUS@Screen>
@@ -162,7 +162,7 @@
             font_size: 20
             color: Color("#FFFFFF")
             background_color: Color("#2ecc71")
-            #on_release: app.root.changeScreen(self.text.lower())
+            on_release: app.root.changeScreen('ypUS', category.theTxt.text, filename.theTxt.text, usstate.theTxt.text)
 
         Button:
             text: "Back to Main Screen"
@@ -201,7 +201,7 @@
             font_size: 20
             color: Color("#FFFFFF")
             background_color: Color("#2ecc71")
-            #on_release: app.root.changeScreen(self.text.lower())
+            on_release: app.root.changeScreen('ypUK', category.theTxt.text, filename.theTxt.text, postcode.theTxt.text)
 
 
         Button:

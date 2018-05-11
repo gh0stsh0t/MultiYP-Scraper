@@ -1,3 +1,6 @@
+#import os
+#os.environ["KIVY_NO_CONSOLELOG"] = "1"
+#os.environ["KIVY_NO_FILELOG"] = "1"
 import kivy
 from kivy.app import App
 from kivy.uix.label import Label
@@ -20,28 +23,27 @@ from kivy.utils import get_color_from_hex
 import sys
 import time
 import random
-
-Window.clearcolor = get_color_from_hex("#1c1c1c")
+import subprocess
 
 #root
 class MainScreen(BoxLayout):
 
 	def __init__(self,**kwargs):
-		super (MainScreen, self).__init__(**kwargs)
+	    super (MainScreen, self).__init__(**kwargs)
+
+        def start_wrapper(self, choice , category, filename, state=None):
+            subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
+
 
 	def changeScreen(self, next_screen):
-
-		if next_screen == "yellowpagesaus":
-			self.ids.kivy_screen_manager.current = "yellowpagesaus"
-
-		if next_screen == "yellowpagesus":
-			self.ids.kivy_screen_manager.current = "yellowpagesus"
-
-		if next_screen == "yellowpagesuk":
-			self.ids.kivy_screen_manager.current = "yellowpagesuk"
-
-		if next_screen == "back to main screen":
-			self.ids.kivy_screen_manager.current = "start_screen"
+	    if next_screen == "yellowpagesaus":
+                self.ids.kivy_screen_manager.current = "yellowpagesaus"
+	    elif next_screen == "yellowpagesus":
+                self.ids.kivy_screen_manager.current = "yellowpagesus"
+	    elif next_screen == "yellowpagesuk":
+                self.ids.kivy_screen_manager.current = "yellowpagesuk"
+	    elif next_screen == "back to main screen":
+                self.ids.kivy_screen_manager.current = "start_screen"
 
 #app object
 class ScraperUIApp(App):

@@ -2,36 +2,28 @@ from twisted.internet import reactor
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from scrapy import spiderloader
-def main():
-    filename = raw_input("\nEnter output filename: ")
-    cat = raw_input("Enter category: ")
-    print("")
-    settings = get_project_settings()
+import sys
 
-    settings.set('FEED_FORMAT', 'csv', priority='cmdline')
-    settings.set('FEED_URI', filename+'.csv', priority='cmdline')
 
-    process = CrawlerProcess(settings)
+class KickStarter:
 
-    spider_loader = spiderloader.SpiderLoader.from_settings(settings)
-    spiders = spider_loader.list()
-    print("")
-    x = 1
-    for spider in spiders:
-        print(str(x)+". "+spider)
-        x += 1
-    choice = int(raw_input("Enter choice: "))
-    process.crawl(spiders[choice-1], category=cat)
-    process.start()
+    def __init__(self):
+        self.settings = get_project_settings()
 
-    print("\nRemoving Duplicate Entries")
-    with open(filename+'.csv', 'r') as in_file, open(filename+'cleaned.csv', 'w') as out_file:
-        seen = set()  # set for fast O(1) amortized lookup
-        for line in in_file:
-            if line in seen:
-                continue  # skip duplicate
+    def start_crawl(self, choice, category, filename, state=None):
+        
+        self.settings.set('FEED_FORMAT', 'csv', priority='cmdline')
+        self.settings.set('FEED_URI', filename+'.csv', priority='cmdline')
 
-            seen.add(line)
-            out_file.write(line)
+        process = CrawlerProcess(self.settings)
+        process.crawl(choice, category=category, state=state)
+        process.start()
 
-    print("Process Finished")
+        print("Process Finished")
+
+
+if __name__== '__main__':
+    x = KickStarter()
+    if len(sys.argv) < 5:
+        sys.argv.append(None)
+    x.start_crawl(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])
