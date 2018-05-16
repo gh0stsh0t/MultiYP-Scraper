@@ -145,6 +145,48 @@
             text:"[b]Yellow Pages USA:[/b]"
             font_size: min(root.height, root.width) / 10
 
+		GridLayout:
+        	cols:8
+			#padding:10,10
+			#spacing:10,10
+			row_default_height: '30dp'
+			id: asdf
+			asd:usstate1
+
+			CheckBox:
+				#group: 'usstate'
+
+				id: usstate1
+
+			Label:
+				text: 'Alabama'
+
+			CheckBox:
+				#group: 'usstate'
+				id: usstate2
+
+			Label:
+				text: 'Alaska'
+				halign: 'left'
+
+			CheckBox:
+				#group: 'usstate'
+				id: usstate3
+
+			Label:
+				text: 'Arizona'
+				halign: 'left'
+
+			CheckBox:
+				#group: 'usstate'
+				id: usstate4
+
+			Label:
+				text: 'Arkansas'
+				halign: 'left'
+
+			
+
         LabelText:
             id: usstate
             lblTxtIn: 'State'

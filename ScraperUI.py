@@ -45,6 +45,9 @@ class MainScreen(BoxLayout):
 	    elif next_screen == "back to main screen":
                 self.ids.kivy_screen_manager.current = "start_screen"
 
+    def addCheckBoxUS():
+        
+
 #app object
 class ScraperUIApp(App):
 
