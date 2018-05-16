@@ -44,10 +44,27 @@ class MainScreen(BoxLayout):
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
 	    elif next_screen == "back to main screen":
                 self.ids.kivy_screen_manager.current = "start_screen"
+"""
+class CkeckBoxGrid(GridLayout):
+    self.cols = 8
+    row_default_height: '30dp'
 
-    def addCheckBoxUS():
-        
+    def addCheckBox(countryname):
 
+        if countryname == "uk"
+            csvname = 'UKpostcodes.csv'
+        elif countryname == "us"
+            csvname = 'UScities.csv'
+
+        LocationDict = {}
+        with open(csvname) as csvfile:  # Read in the csv file
+            readCSV = csv.reader(csvfile, delimiter=',')
+            states = []
+            for row in readCSV:
+                states.append(row[0])
+                self.LocationDict["location"+row] = CheckBox(active=False)
+                self.add_widget(Label(text=row[1]))
+"""
 #app object
 class ScraperUIApp(App):
 

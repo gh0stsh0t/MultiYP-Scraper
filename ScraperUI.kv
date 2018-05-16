@@ -87,7 +87,9 @@
         Button:
             text: "Yellow Pages USA"
             font_size: 20
-            on_release: app.root.changeScreen("yellowpagesus")
+            on_release:
+            	app.root.changeScreen("yellowpagesus")
+            	#call CheckBoxGrid and insert
 
         Button:
             text: "Yellow Pages UK"
@@ -185,7 +187,7 @@
 				text: 'Arkansas'
 				halign: 'left'
 
-			
+
 
         LabelText:
             id: usstate
