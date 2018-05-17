@@ -33,8 +33,7 @@ class MainScreen(BoxLayout):
 
         def start_wrapper(self, choice , category, filename, state=None):
             subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
-
-
+            
 	def changeScreen(self, next_screen):
 	    if next_screen == "yellowpagesaus":
                 self.ids.kivy_screen_manager.current = "yellowpagesaus"
@@ -44,6 +43,23 @@ class MainScreen(BoxLayout):
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
 	    elif next_screen == "back to main screen":
                 self.ids.kivy_screen_manager.current = "start_screen"
+
+    def addCheckBox(self, countryname):
+        if countryname == "uk"
+            csvName = 'UKpostcodes.csv'
+            checkBoxName = 'usstate'
+        elif countryname == "us"
+            csvName = 'UScities.csv'
+            checkBoxName = 'ukpostcode'
+
+        LocationDict = {}
+        with open(csvName) as csvfile:  # Read in the csv file
+            readCSV = csv.reader(csvfile, delimiter=',')
+            states = []
+            for row in readCSV:
+                states.append(row[0])
+                self.LocationDict[checkBoxName+row] = CheckBox(active=False)
+                self.add_widget(Label(text=row[1]))
 """
 class CkeckBoxGrid(GridLayout):
     self.cols = 8
