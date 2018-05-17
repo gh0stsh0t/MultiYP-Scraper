@@ -1,6 +1,9 @@
 #import os
+#!python2.7.14
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
 #os.environ["KIVY_NO_FILELOG"] = "1"
+import sys
+sys.path.append('pkgs')
 import kivy
 from kivy.app import App
 from kivy.uix.label import Label
@@ -20,7 +23,6 @@ from functools import partial
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
-import sys
 import time
 import random
 import subprocess
@@ -32,7 +34,7 @@ class MainScreen(BoxLayout):
 	    super (MainScreen, self).__init__(**kwargs)
 
         def start_wrapper(self, choice , category, filename, state=None):
-            subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
+            subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
 
 
 	def changeScreen(self, next_screen):
