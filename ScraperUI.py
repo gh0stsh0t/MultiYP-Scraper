@@ -19,38 +19,51 @@ from kivy.core.audio import SoundLoader
 from functools import partial
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
+
+
+
 from kivy.utils import get_color_from_hex
+from kivy.uix.gridlayout import GridLayout
+from kivy.uix.checkbox import CheckBox
 import sys
 import time
 import random
 import subprocess
+import csv
 
 #root
 class MainScreen(BoxLayout):
+    CheckBoxGrid = GridLayout(cols=8)
 
-	def __init__(self,**kwargs):
-	    super (MainScreen, self).__init__(**kwargs)
+    def __init__(self,**kwargs):
+        super (MainScreen, self).__init__(**kwargs)
+
 
         def start_wrapper(self, choice , category, filename, state=None):
             subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
             
-	def changeScreen(self, next_screen):
-	    if next_screen == "yellowpagesaus":
+    def changeScreen(self, next_screen):
+        if next_screen == "yellowpagesaus":
                 self.ids.kivy_screen_manager.current = "yellowpagesaus"
-	    elif next_screen == "yellowpagesus":
+        elif next_screen == "yellowpagesus":
                 self.ids.kivy_screen_manager.current = "yellowpagesus"
-	    elif next_screen == "yellowpagesuk":
+                self.addCheckBox("us")
+        elif next_screen == "yellowpagesuk":
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
-	    elif next_screen == "back to main screen":
+                self.addCheckBox("uk")
+                self.nameRow = 1
+        elif next_screen == "back to main screen":
                 self.ids.kivy_screen_manager.current = "start_screen"
 
     def addCheckBox(self, countryname):
-        if countryname == "uk"
+        if countryname == "uk":
             csvName = 'UKpostcodes.csv'
-            checkBoxName = 'usstate'
-        elif countryname == "us"
-            csvName = 'UScities.csv'
             checkBoxName = 'ukpostcode'
+            nameRow = 1
+        elif countryname == "us":
+            csvName = 'UScities.csv'
+            checkBoxName = 'usstate'
+            nameRow = 0
 
         LocationDict = {}
         with open(csvName) as csvfile:  # Read in the csv file
@@ -58,8 +71,11 @@ class MainScreen(BoxLayout):
             states = []
             for row in readCSV:
                 states.append(row[0])
-                self.LocationDict[checkBoxName+row] = CheckBox(active=False)
-                self.add_widget(Label(text=row[1]))
+                LocationDict[str(checkBoxName)+str(row)] = CheckBox(active=False)
+                self.CheckBoxGrid.add_widget(LocationDict[str(checkBoxName)+str(row)])
+                self.CheckBoxGrid.add_widget(Label(text=row[nameRow]))
+        
+        self.add_widget(self.CheckBoxGrid)
 """
 class CkeckBoxGrid(GridLayout):
     self.cols = 8
