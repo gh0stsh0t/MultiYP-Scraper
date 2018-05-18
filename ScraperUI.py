@@ -34,7 +34,14 @@ class MainScreen(BoxLayout):
 	    super (MainScreen, self).__init__(**kwargs)
 
         def start_wrapper(self, choice , category, filename, state=None):
-            subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
+            if state:
+                crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename, state], cwd=sys.path[0]) 
+            else:
+                crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
+            
+            while isinstance(App.get_running_app().root_window.children[0], Popup):
+                if crawler.poll():
+                    self.popup.dismiss()
 
 
 	def changeScreen(self, next_screen):
