@@ -12,29 +12,16 @@ class YPSpider(scrapy.Spider):
     def __init__(self, category=None, state=None, *args, **kwargs):
         super(YPSpider, self).__init__(*args, **kwargs)
         self.category = category
-        with open('UScities.csv') as csvfile:  # Read in the csv file
-            readCSV = csv.reader(csvfile, delimiter=',')
-            self.zips = []
-            states = []
-            logging.info(state)
-            for row in readCSV:
-                states.append(row[1])
-
-            if state is None:
-                self.zips.extend(states)  # Isolate the zipcodes portion of csv
-            else:
-                state = state.split(',')
-                state = [int(i) for i in state]
-                state = list(set(state))
-                for x in state:
-                    try:
-                        self.zips.append(states[x-1])
-                    except Exception:
-                        sys.exc_clear()
-
-            logging.info("States to go through: "+str(self.zips))
-            # toDO: o(n+2k) make into o(n)
-
+        if state:
+            self.zips=state.split(',')
+        else:
+            with open('UScities.csv') as csvfile:  # Read in the csv file
+                readCSV = csv.reader(csvfile, delimiter=',')
+                self.zips = []
+                for row in readCSV:
+                    self.zips.append(row[1])
+                
+        logging.info("States to go through: "+str(self.zips))
         next_page = "https://www.yellowpages.com/search?search_terms={0}&geo_location_terms={1}".format(
             category, self.zips.pop(0))
         self.start_urls = [next_page]

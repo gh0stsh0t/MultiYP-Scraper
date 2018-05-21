@@ -1,6 +1,9 @@
 #import os
+#!python2.7.14
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
 #os.environ["KIVY_NO_FILELOG"] = "1"
+import sys
+sys.path.append('pkgs')
 import kivy
 from kivy.app import App
 from kivy.uix.label import Label
@@ -23,7 +26,6 @@ from kivy.utils import get_color_from_hex
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
 from kivy.animation import Animation, AnimationTransition
-import sys
 import time
 import random
 import subprocess
@@ -38,8 +40,17 @@ class MainScreen(BoxLayout):
     LocationDict = {}
 
     def __init__(self,**kwargs):
-        super (MainScreen, self).__init__(**kwargs)
+	super (MainScreen, self).__init__(**kwargs)
 
+    def start_wrapper(self, choice , category, filename, state=None):
+        if state:
+            crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename, state], cwd=sys.path[0]) 
+        else:
+            crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
+        
+        while isinstance(App.get_running_app().root_window.children[0], Popup):
+            if crawler.poll():
+                self.popup.dismiss()
 
     def start_wrapper(self, choice , category, filename, state=None):
         subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
