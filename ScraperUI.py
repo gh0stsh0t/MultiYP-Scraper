@@ -15,13 +15,10 @@ from kivy.uix.button import Button
 from kivy.uix.popup import Popup
 from kivy.uix.image import Image
 from kivy.uix.screenmanager import Screen, ScreenManager
-from kivy.core.audio import SoundLoader
+from kivy.uix.scrollview import ScrollView
 from functools import partial
 from kivy.properties import ObjectProperty
 from kivy.core.window import Window
-
-
-
 from kivy.utils import get_color_from_hex
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
@@ -31,15 +28,18 @@ import random
 import subprocess
 import csv
 
+
+Window.size = (1100, 600)
 #root
 class MainScreen(BoxLayout):
-    CheckBoxGrid = GridLayout(cols=8)
+    CheckBoxGrid = GridLayout(cols=10, spacing=10, padding=(0, 30, 40, 30), size_hint_y=None)
+    CheckBoxGrid.bind(minimum_height=CheckBoxGrid.setter('height'))
 
     def __init__(self,**kwargs):
         super (MainScreen, self).__init__(**kwargs)
 
 
-        def start_wrapper(self, choice , category, filename, state=None):
+    def start_wrapper(self, choice , category, filename, state=None):
             subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
             
     def changeScreen(self, next_screen):
@@ -48,13 +48,33 @@ class MainScreen(BoxLayout):
         elif next_screen == "yellowpagesus":
                 self.ids.kivy_screen_manager.current = "yellowpagesus"
                 self.addCheckBox("us")
+                self.nameRow = 0
+                self.addButtons("us")
         elif next_screen == "yellowpagesuk":
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
-                self.addCheckBox("uk")
+                #self.addCheckBox("uk")
                 self.nameRow = 1
+
         elif next_screen == "back to main screen":
                 self.ids.kivy_screen_manager.current = "start_screen"
+                self.CheckBoxGrid.clear_widgets()
+                self.GridScroll.clear_widgets()
+                self.remove_widget(self.CheckBoxGrid)
+                self.remove_widget(self.GridScroll)
+"""
+    def addButtons(self, countryname):
+        buttonStart = Button(text = "Start", height = 40, width = 10, color = color("#ffffff"), background_color = color("#2ecc71"))
+        buttonBack = Button(text = "Back to Main Screen", height = 40, width = 10)
+        buttonBack.bind(on_press = app.root.changeScreen(self.text.lower()))
+        if countryname == "uk":
+            #buttonStart.bind(on_press = app.root.start_wrapper('ypUS', category.theTxt.text, filename.theTxt.text, usstate.theTxt.text))
+            self.add_widget(buttonStart)
+            self.add_widget(buttonBack)
 
+        elif countryname == "us":
+            self.add_widget(buttonStart)
+            self.add_widget(buttonBack)
+"""
     def addCheckBox(self, countryname):
         if countryname == "uk":
             csvName = 'UKpostcodes.csv'
@@ -71,32 +91,15 @@ class MainScreen(BoxLayout):
             states = []
             for row in readCSV:
                 states.append(row[0])
-                LocationDict[str(checkBoxName)+str(row)] = CheckBox(active=False)
+                LocationDict[str(checkBoxName)+str(row)] = CheckBox(active=False, size_hint_y=None, height=30)
                 self.CheckBoxGrid.add_widget(LocationDict[str(checkBoxName)+str(row)])
-                self.CheckBoxGrid.add_widget(Label(text=row[nameRow]))
-        
-        self.add_widget(self.CheckBoxGrid)
-"""
-class CkeckBoxGrid(GridLayout):
-    self.cols = 8
-    row_default_height: '30dp'
+                LabelTxt = Label(text=row[nameRow], halign="left")
+                self.CheckBoxGrid.add_widget(LabelTxt)
 
-    def addCheckBox(countryname):
+        self.GridScroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/3))
+        self.GridScroll.add_widget(self.CheckBoxGrid)
+        self.add_widget(self.GridScroll)
 
-        if countryname == "uk"
-            csvname = 'UKpostcodes.csv'
-        elif countryname == "us"
-            csvname = 'UScities.csv'
-
-        LocationDict = {}
-        with open(csvname) as csvfile:  # Read in the csv file
-            readCSV = csv.reader(csvfile, delimiter=',')
-            states = []
-            for row in readCSV:
-                states.append(row[0])
-                self.LocationDict["location"+row] = CheckBox(active=False)
-                self.add_widget(Label(text=row[1]))
-"""
 #app object
 class ScraperUIApp(App):
 

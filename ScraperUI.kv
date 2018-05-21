@@ -100,7 +100,8 @@
             on_release: app.root.changeScreen("yellowpagesuk")
 
 <yellowPagesAus@Screen>
-	BoxLayout:
+
+    BoxLayout:
         #Settings
         orientation:"vertical"
 
@@ -136,6 +137,7 @@
 
 
 <yellowPagesUS@Screen>
+    on_pre_enter: app.root.addCheckBox("us")
     BoxLayout:
         #Settings
         orientation:"vertical"
@@ -150,55 +152,6 @@
             text:"[b]Yellow Pages USA:[/b]"
             font_size: min(root.height, root.width) / 10
 
-		GridLayout:
-        	cols:8
-			#padding:10,10
-			#spacing:10,10
-
-			#app.root.addCheckBox("us")
-			
-			row_default_height: '30dp'
-			id: asdf
-			asd:usstate1
-
-			CheckBox:
-				#group: 'usstate'
-
-				id: usstate1
-
-			Label:
-				text: 'Alabama'
-
-			CheckBox:
-				#group: 'usstate'
-				id: usstate2
-
-			Label:
-				text: 'Alaska'
-				halign: 'left'
-
-			CheckBox:
-				#group: 'usstate'
-				id: usstate3
-
-			Label:
-				text: 'Arizona'
-				halign: 'left'
-
-			CheckBox:
-				#group: 'usstate'
-				id: usstate4
-
-			Label:
-				text: 'Arkansas'
-				halign: 'left'
-
-
-
-        LabelText:
-            id: usstate
-            lblTxtIn: 'State'
-
         LabelText:
             id: category
             lblTxtIn: 'Category'
@@ -206,7 +159,7 @@
         LabelText:
             id: filename
             lblTxtIn: 'File Name'
-
+"""
         Button:
             text: "Start"
             font_size: 20
@@ -218,8 +171,9 @@
             text: "Back to Main Screen"
             font_size: 20
             on_release: app.root.changeScreen(self.text.lower())
-
+"""
 <yellowPagesUK@Screen>
+    on_pre_enter: app.root.addCheckBox("uk") 
     BoxLayout:
         #Settings
         orientation:"vertical"
@@ -234,9 +188,7 @@
             text:"[b]Yellow Pages UK:[/b]"
             font_size: min(root.height, root.width) / 10
 
-        LabelText:
-            id: postcode
-            lblTxtIn: 'Postcode'
+        #on_pre_enter: app.root.addCheckBox("uk")
 
         LabelText:
             id: category
