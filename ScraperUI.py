@@ -33,7 +33,7 @@ import csv
 Window.size = (1100, 600)
 #root
 class MainScreen(BoxLayout):
-    CheckBoxGrid = GridLayout(cols=10, spacing=10, padding=(0, 30, 40, 30), size_hint_y=None)
+    CheckBoxGrid = GridLayout(cols=10, spacing=10, padding=(0, 30, 40, 30), size_hint_y=None, background_color= Color("#282828"))
     CheckBoxGrid.bind(minimum_height=CheckBoxGrid.setter('height'))
     LocationDict = {}
 
@@ -45,7 +45,6 @@ class MainScreen(BoxLayout):
         subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
         
     def changeScreen(self, next_screen):
-        print self.LocationDict
         self.LocationDict.clear()
         if next_screen == "yellowpagesaus":
                 self.ids.kivy_screen_manager.current = "yellowpagesaus"
@@ -59,12 +58,13 @@ class MainScreen(BoxLayout):
                 self.nameRow = 1
 
         elif next_screen == "back to main screen":
+                if self.ids.kivy_screen_manager.current == "yellowpagesuk" or self.ids.kivy_screen_manager.current == "yellowpagesus":
+                    self.CheckBoxGrid.clear_widgets()
+                    self.remove_widget(self.CheckBoxGrid)
+                    x = self.ids['yellowPagesUK' if self.ids.kivy_screen_manager.current == "yellowpagesuk" else 'yellowPagesUS']
+                    x.ids['blankScrollView'].clear_widgets()
                 self.ids.kivy_screen_manager.current = "start_screen"
-                self.CheckBoxGrid.clear_widgets()
-                self.GridScroll.clear_widgets()
-                self.remove_widget(self.CheckBoxGrid)
-                self.remove_widget(self.GridScroll)
-
+                
         elif countryname == "us":
             self.add_widget(buttonStart)
             self.add_widget(buttonBack)
@@ -91,9 +91,11 @@ class MainScreen(BoxLayout):
                 #print (self.CheckBoxGrid.str(checkBoxName + rowNumber)).id.active
                 #LabelTxt.bind(on_press = self.CheckBoxGrid.LocationDict[str(checkBoxName)+str(row)]._do_press())
 
-        self.GridScroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/3))
-        self.GridScroll.add_widget(self.CheckBoxGrid)
-        self.add_widget(self.GridScroll)
+        #self.GridScroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/3), background_color= Color("#ffffff"))
+        print self.ids
+        x = self.ids['yellowPagesUK' if self.ids.kivy_screen_manager.current == "yellowpagesuk" else 'yellowPagesUS']
+        x.ids['blankScrollView'].add_widget(self.CheckBoxGrid)
+
 
 #app object
 class ScraperUIApp(App):

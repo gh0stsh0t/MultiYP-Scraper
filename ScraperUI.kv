@@ -14,6 +14,11 @@
 
 <GridLayout>:
     margin: 0, 0, 30, 0
+    background_color: Color("#282828")
+
+<ScrollView>:
+    background_color: Color("#282828")
+
 
 <LabelText@BoxLayout>:
     orientation: 'horizontal'      
@@ -136,9 +141,10 @@
 
 
 <yellowPagesUS@Screen>
-    #on_pre_enter: app.root.addCheckBox("us")
     BoxLayout:
         #Settings
+
+        id:BoxLayout1
         orientation:"vertical"
 
         #about 2% of the width
@@ -150,6 +156,18 @@
         WrappedLabel:
             text:"[b]Yellow Pages USA:[/b]"
             font_size: min(root.height, root.width) / 10
+
+        ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            id: blankScrollView
+            size_hint: (1, None) 
+            size: root.width, root.height/3
 
         LabelText:
             id: category
@@ -173,7 +191,8 @@
                 
 
 <yellowPagesUK@Screen>
-    #on_pre_enter: app.root.addCheckBox("uk") 
+
+
     BoxLayout:
         #Settings
         orientation:"vertical"
@@ -189,6 +208,18 @@
             font_size: min(root.height, root.width) / 10
 
         #on_pre_enter: app.root.addCheckBox("uk")
+        ScrollView:
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            id: blankScrollView
+            size_hint: (1, None) 
+            size: root.width, root.height/3
 
         LabelText:
             id: category
