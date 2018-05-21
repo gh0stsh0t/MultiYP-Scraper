@@ -22,6 +22,7 @@ from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 from kivy.uix.gridlayout import GridLayout
 from kivy.uix.checkbox import CheckBox
+from kivy.animation import Animation, AnimationTransition
 import sys
 import time
 import random
@@ -34,25 +35,27 @@ Window.size = (1100, 600)
 class MainScreen(BoxLayout):
     CheckBoxGrid = GridLayout(cols=10, spacing=10, padding=(0, 30, 40, 30), size_hint_y=None)
     CheckBoxGrid.bind(minimum_height=CheckBoxGrid.setter('height'))
+    LocationDict = {}
 
     def __init__(self,**kwargs):
         super (MainScreen, self).__init__(**kwargs)
 
 
     def start_wrapper(self, choice , category, filename, state=None):
-            subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
-            
+        subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
+        
     def changeScreen(self, next_screen):
+        print self.LocationDict
+        self.LocationDict.clear()
         if next_screen == "yellowpagesaus":
                 self.ids.kivy_screen_manager.current = "yellowpagesaus"
         elif next_screen == "yellowpagesus":
                 self.ids.kivy_screen_manager.current = "yellowpagesus"
                 self.addCheckBox("us")
                 self.nameRow = 0
-                self.addButtons("us")
         elif next_screen == "yellowpagesuk":
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
-                #self.addCheckBox("uk")
+                self.addCheckBox("uk")
                 self.nameRow = 1
 
         elif next_screen == "back to main screen":
@@ -61,20 +64,11 @@ class MainScreen(BoxLayout):
                 self.GridScroll.clear_widgets()
                 self.remove_widget(self.CheckBoxGrid)
                 self.remove_widget(self.GridScroll)
-"""
-    def addButtons(self, countryname):
-        buttonStart = Button(text = "Start", height = 40, width = 10, color = color("#ffffff"), background_color = color("#2ecc71"))
-        buttonBack = Button(text = "Back to Main Screen", height = 40, width = 10)
-        buttonBack.bind(on_press = app.root.changeScreen(self.text.lower()))
-        if countryname == "uk":
-            #buttonStart.bind(on_press = app.root.start_wrapper('ypUS', category.theTxt.text, filename.theTxt.text, usstate.theTxt.text))
-            self.add_widget(buttonStart)
-            self.add_widget(buttonBack)
 
         elif countryname == "us":
             self.add_widget(buttonStart)
             self.add_widget(buttonBack)
-"""
+
     def addCheckBox(self, countryname):
         if countryname == "uk":
             csvName = 'UKpostcodes.csv'
@@ -85,16 +79,17 @@ class MainScreen(BoxLayout):
             checkBoxName = 'usstate'
             nameRow = 0
 
-        LocationDict = {}
         with open(csvName) as csvfile:  # Read in the csv file
             readCSV = csv.reader(csvfile, delimiter=',')
-            states = []
+            rowNumber = 0
             for row in readCSV:
-                states.append(row[0])
-                LocationDict[str(checkBoxName)+str(row)] = CheckBox(active=False, size_hint_y=None, height=30)
-                self.CheckBoxGrid.add_widget(LocationDict[str(checkBoxName)+str(row)])
+                rowNumber+=1
+                self.LocationDict[str(checkBoxName)+str(rowNumber)] = CheckBox(active=False, size_hint_y=None, height=30, id = row[1 if countryname == "us" else 0])
+                self.CheckBoxGrid.add_widget(self.LocationDict[str(checkBoxName)+str(rowNumber)])
                 LabelTxt = Label(text=row[nameRow], halign="left")
                 self.CheckBoxGrid.add_widget(LabelTxt)
+                #print (self.CheckBoxGrid.str(checkBoxName + rowNumber)).id.active
+                #LabelTxt.bind(on_press = self.CheckBoxGrid.LocationDict[str(checkBoxName)+str(row)]._do_press())
 
         self.GridScroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/3))
         self.GridScroll.add_widget(self.CheckBoxGrid)
