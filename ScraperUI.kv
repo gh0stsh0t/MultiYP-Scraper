@@ -12,6 +12,14 @@
 <TextInput>
     multiline: False
 
+<GridLayout>:
+    margin: 0, 0, 30, 0
+    background_color: Color("#282828")
+
+<ScrollView>:
+    background_color: Color("#282828")
+
+
 <LabelText@BoxLayout>:
     orientation: 'horizontal'      
     lblTxtIn: 'default'
@@ -88,6 +96,7 @@
             text: "Yellow Pages USA"
             font_size: 20
             on_release: app.root.changeScreen("yellowpagesus")
+            	#call CheckBoxGrid and insert
 
         Button:
             text: "Yellow Pages UK"
@@ -95,7 +104,8 @@
             on_release: app.root.changeScreen("yellowpagesuk")
 
 <yellowPagesAus@Screen>
-	BoxLayout:
+
+    BoxLayout:
         #Settings
         orientation:"vertical"
 
@@ -133,6 +143,8 @@
 <yellowPagesUS@Screen>
     BoxLayout:
         #Settings
+
+        id:BoxLayout1
         orientation:"vertical"
 
         #about 2% of the width
@@ -145,9 +157,17 @@
             text:"[b]Yellow Pages USA:[/b]"
             font_size: min(root.height, root.width) / 10
 
-        LabelText:
-            id: usstate
-            lblTxtIn: 'State'
+        ScrollView:
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            id: blankScrollView
+            size_hint: (1, None) 
+            size: root.width, root.height/3
 
         LabelText:
             id: category
@@ -168,8 +188,11 @@
             text: "Back to Main Screen"
             font_size: 20
             on_release: app.root.changeScreen(self.text.lower())
+                
 
 <yellowPagesUK@Screen>
+
+
     BoxLayout:
         #Settings
         orientation:"vertical"
@@ -184,9 +207,19 @@
             text:"[b]Yellow Pages UK:[/b]"
             font_size: min(root.height, root.width) / 10
 
-        LabelText:
-            id: postcode
-            lblTxtIn: 'Postcode'
+        #on_pre_enter: app.root.addCheckBox("uk")
+        ScrollView:
+
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 0.1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            id: blankScrollView
+            size_hint: (1, None) 
+            size: root.width, root.height/3
 
         LabelText:
             id: category
