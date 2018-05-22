@@ -30,7 +30,7 @@ import time
 import random
 import subprocess
 import csv
-
+import threading
 
 Window.size = (1100, 600)
 #root
@@ -42,31 +42,43 @@ class MainScreen(BoxLayout):
     def __init__(self,**kwargs):
 	super (MainScreen, self).__init__(**kwargs)
 
-    def start_wrapper(self, choice , category, filename, state=None):
+    def start_wrapper(self, choice , category, filename, state=False):
+
         if state:
+            state = []
+            for key in self.LocationDict:
+                if self.LocationDict[key].active:
+                    state.append(key)
+            state = ",".join(state)
             crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename, state], cwd=sys.path[0]) 
         else:
             crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
-        
-        while isinstance(App.get_running_app().root_window.children[0], Popup):
-            if crawler.poll():
-                self.popup.dismiss()
+        threa = threading.Thread(target=self.runInThread, args=(crawler,))
+        threa.start()
+        self.conpop2(crawler)
 
-    def start_wrapper(self, choice , category, filename, state=None):
-        subprocess.call(['python', 'SpiderCrawl.py', choice, category, filename]) 
-        
+    def runInThread(self, proc):
+        proc.wait()
+        self.popup.dismiss()
+
+    def conpop2(self, scraper):
+        content = BoxLayout(orientation="horizontal")
+        self.popup = Popup(title="Scraper is Running", size_hint=(None, None), size=(500, 200), auto_dismiss=False, content=content)
+        kill = lambda x:scraper.terminate()
+        cancel = Button(text="Stop Scraper", on_press=kill)
+        content.add_widget(cancel)
+        self.popup.open()
+
     def changeScreen(self, next_screen):
         self.LocationDict.clear()
         if next_screen == "yellowpagesaus":
                 self.ids.kivy_screen_manager.current = "yellowpagesaus"
         elif next_screen == "yellowpagesus":
                 self.ids.kivy_screen_manager.current = "yellowpagesus"
-                self.addCheckBox("us")
-                self.nameRow = 0
+                self.addCheckBox()
         elif next_screen == "yellowpagesuk":
                 self.ids.kivy_screen_manager.current = "yellowpagesuk"
-                self.addCheckBox("uk")
-                self.nameRow = 1
+                self.addCheckBox(True)
 
         elif next_screen == "back to main screen":
                 if self.ids.kivy_screen_manager.current == "yellowpagesuk" or self.ids.kivy_screen_manager.current == "yellowpagesus":
@@ -75,35 +87,25 @@ class MainScreen(BoxLayout):
                     x = self.ids['yellowPagesUK' if self.ids.kivy_screen_manager.current == "yellowpagesuk" else 'yellowPagesUS']
                     x.ids['blankScrollView'].clear_widgets()
                 self.ids.kivy_screen_manager.current = "start_screen"
-                
-        elif countryname == "us":
-            self.add_widget(buttonStart)
-            self.add_widget(buttonBack)
 
-    def addCheckBox(self, countryname):
-        if countryname == "uk":
+    def addCheckBox(self, countryname=False):
+        if countryname:
             csvName = 'UKpostcodes.csv'
             checkBoxName = 'ukpostcode'
             nameRow = 1
-        elif countryname == "us":
+        else:
             csvName = 'UScities.csv'
             checkBoxName = 'usstate'
             nameRow = 0
 
         with open(csvName) as csvfile:  # Read in the csv file
             readCSV = csv.reader(csvfile, delimiter=',')
-            rowNumber = 0
             for row in readCSV:
-                rowNumber+=1
-                self.LocationDict[str(checkBoxName)+str(rowNumber)] = CheckBox(active=False, size_hint_y=None, height=30, id = row[1 if countryname == "us" else 0])
-                self.CheckBoxGrid.add_widget(self.LocationDict[str(checkBoxName)+str(rowNumber)])
+                key = row[0 if countryname else 1]
+                self.LocationDict[key] = CheckBox(active=False, size_hint_y=None, height=30)
+                self.CheckBoxGrid.add_widget(self.LocationDict[key])
                 LabelTxt = Label(text=row[nameRow], halign="left")
                 self.CheckBoxGrid.add_widget(LabelTxt)
-                #print (self.CheckBoxGrid.str(checkBoxName + rowNumber)).id.active
-                #LabelTxt.bind(on_press = self.CheckBoxGrid.LocationDict[str(checkBoxName)+str(row)]._do_press())
-
-        #self.GridScroll = ScrollView(size_hint=(1, None), size=(Window.width, Window.height/3), background_color= Color("#ffffff"))
-        print self.ids
         x = self.ids['yellowPagesUK' if self.ids.kivy_screen_manager.current == "yellowpagesuk" else 'yellowPagesUS']
         x.ids['blankScrollView'].add_widget(self.CheckBoxGrid)
 
@@ -113,7 +115,6 @@ class ScraperUIApp(App):
 
     def __init__(self, **kwargs):
         super(ScraperUIApp, self).__init__(**kwargs)
-
 
     def build(self):
         self.title = 'Scraper App'
