@@ -1,8 +1,10 @@
+import os
+import sys
+sys.path.append('pkgs')
 from twisted.internet import reactor
 from scrapy.crawler import CrawlerProcess
 from scrapy.utils.project import get_project_settings
 from scrapy import spiderloader
-import sys
 
 
 class KickStarter:

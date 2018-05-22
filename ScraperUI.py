@@ -1,8 +1,10 @@
-#import os
 #!python2.7.14
 #os.environ["KIVY_NO_CONSOLELOG"] = "1"
 #os.environ["KIVY_NO_FILELOG"] = "1"
+import os
 import sys
+sys.path.append(os.path.dirname(__file__))
+os.chdir(os.path.dirname(__file__))
 sys.path.append('pkgs')
 import kivy
 from kivy.app import App
@@ -31,7 +33,7 @@ import random
 import subprocess
 import csv
 import threading
-
+print sys.path
 Window.size = (1100, 600)
 #root
 class MainScreen(BoxLayout):
@@ -50,9 +52,9 @@ class MainScreen(BoxLayout):
                 if self.LocationDict[key].active:
                     state.append(key)
             state = ",".join(state)
-            crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename, state], cwd=sys.path[0]) 
+            crawler = subprocess.Popen(['python', 'SpiderCrawl.pyc', choice, category, filename, state], cwd=sys.path[0]) 
         else:
-            crawler = subprocess.Popen(['python', 'SpiderCrawl.py', choice, category, filename], cwd=sys.path[0]) 
+            crawler = subprocess.Popen(['python', 'SpiderCrawl.pyc', choice, category, filename], cwd=sys.path[0]) 
         threa = threading.Thread(target=self.runInThread, args=(crawler,))
         threa.start()
         self.conpop2(crawler)
