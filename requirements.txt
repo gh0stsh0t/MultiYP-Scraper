@@ -3,5 +3,5 @@ Twisted==17.9.0
 requests==2.18.4
 pip==10.0.1
 kivy.deps.sdl2==0.1.17
-beautifulsoup4==4.6.0
+beautifulsoup4==4.7.1
 kivy==1.10.0
