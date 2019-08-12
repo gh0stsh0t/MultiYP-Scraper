@@ -1,7 +1,7 @@
 Scrapy==1.7.3
 Twisted==19.7.0
 requests==2.22.0
-pip==19.2.1
+pip==19.2.2
 kivy.deps.sdl2==0.1.22
 beautifulsoup4==4.8.0
 kivy==1.11.1
