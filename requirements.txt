@@ -1,4 +1,4 @@
-Scrapy==1.7.3
+Scrapy==2.0.0
 Twisted==19.7.0
 requests==2.22.0
 pip==19.2.3
